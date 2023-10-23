@@ -1,0 +1,21 @@
+[
+  {
+    "name": "book",
+    "price": 12.49,
+    "exempt": true,
+    "imported": false
+  },
+  {
+    "name": "music CD",
+    "price": 14.99,
+    "exempt": false,
+    "imported": false
+  },
+  {
+    "name": "chocolatebar",
+    "price": 0.85,
+    "exempt": true,
+    "imported": false
+  }
+]
+

@@ -1,0 +1,19 @@
+{
+  "items":
+  [
+    {
+      "name": "book",
+      "total": 12.49
+    },
+    {
+      "name": "music CD",
+      "total": 16.49
+    },
+    {
+      "name": "chocolatebar",
+      "total": 0.85
+    }
+  ],
+  "totalSalesTax": 1.50,
+  "totalCost": 29.83
+}
