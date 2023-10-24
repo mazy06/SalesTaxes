@@ -1,0 +1,16 @@
+
+  {
+    "items":
+    [
+      {
+        "name": "bottle of perfume",
+        "total": 54.65
+      },
+      {
+        "name": "box of chocolates",
+        "total": 10.50
+      }
+    ],
+    "totalSalesTax": 7.65,
+    "totalCost": 65.15
+  }

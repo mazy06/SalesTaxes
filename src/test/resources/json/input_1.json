@@ -1,18 +1,21 @@
 [
   {
     "name": "book",
+    "quantity": 1,
     "price": 12.49,
     "exempt": true,
     "imported": false
   },
   {
     "name": "music CD",
+    "quantity": 1,
     "price": 14.99,
     "exempt": false,
     "imported": false
   },
   {
-    "name": "chocolatebar",
+    "name": "chocolate bar",
+    "quantity": 1,
     "price": 0.85,
     "exempt": true,
     "imported": false

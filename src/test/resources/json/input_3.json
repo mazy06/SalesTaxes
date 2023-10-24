@@ -1,0 +1,30 @@
+[
+  {
+    "name": "bottle of perfume imported",
+    "quantity": 1,
+    "price": 27.99,
+    "exempt": false,
+    "imported": true
+  },
+  {
+    "name": "bottle of perfume",
+    "quantity": 1,
+    "price": 18.99,
+    "exempt": false,
+    "imported": false
+  },
+  {
+    "name": "pocket of headache pills",
+    "quantity": 1,
+    "price": 9.75,
+    "exempt": true,
+    "imported": false
+  },
+  {
+    "name": "box of chocolates",
+    "quantity": 1,
+    "price": 11.25,
+    "exempt": true,
+    "imported": true
+  }
+]

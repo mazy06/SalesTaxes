@@ -1,5 +1,6 @@
 package com.rsif.salestax.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rsif.salestax.model.CartItem;
 import com.rsif.salestax.model.Receipt;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static com.rsif.salestax.TestToolsUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -23,7 +25,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 @WebMvcTest(controllers = SalesTaxController.class)
@@ -46,21 +47,23 @@ class SalesTaxControllerTest {
 
     @Test
     void receiptCalculateTaxWhenValidInput_thenReturns200() throws Exception {
+        //Creation des paramètres d'entrées et de sorties à partir de donnée au format Json
+        List<CartItem> cartItems1 = fromJsonToTypeReference("input_" + 1 + ".json", new TypeReference<>() {});
+        Receipt expectedReceipt1 = fromJsonToObject("output_" + 1 + ".json", Receipt.class);
+        call(cartItems1, expectedReceipt1);
 
-        // Créer des exemples de paramètres d'entrée
-        List<CartItem> cartItems = new ArrayList<>();
-        cartItems.add(new CartItem("book", 12.49, true, false));
-        cartItems.add(new CartItem("music CD", 14.99, false, false));
-        cartItems.add(new CartItem("chocolatebar", 0.85, true, false));
+        List<CartItem> cartItems2 = fromJsonToTypeReference("input_" + 2 + ".json", new TypeReference<>() {});
+        Receipt expectedReceipt2 = fromJsonToObject("output_" + 2 + ".json", Receipt.class);
+        call(cartItems2, expectedReceipt2);
 
-        // Créer un exemple de données de sortie attendues
-        Receipt expectedReceipt = new Receipt();
-        expectedReceipt.addItem("book", 12.49);
-        expectedReceipt.addItem("music CD", 16.49);
-        expectedReceipt.addItem("chocolatebar", 0.85);
-        expectedReceipt.setTotalSalesTax(1.50);
-        expectedReceipt.setTotalCost(29.83);
+        List<CartItem> cartItems3 = fromJsonToTypeReference("input_" + 3 + ".json", new TypeReference<>() {});
+        Receipt expectedReceipt3 = fromJsonToObject("output_" + 3 + ".json", Receipt.class);
+        call(cartItems3, expectedReceipt3);
 
+    }
+
+
+    void call(List<CartItem> cartItems, Receipt expectedReceipt) throws Exception {
         String requestJson = asJsonString(cartItems);
 
         // Appeler la méthode à tester
@@ -71,7 +74,7 @@ class SalesTaxControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
-        Receipt actualReceipt = fromJsonToObject(content, Receipt.class);
+        Receipt actualReceipt = new ObjectMapper().readValue(content, Receipt.class);
 
 
         // Vérifier que la réponse correspond aux données attendues
@@ -88,25 +91,18 @@ class SalesTaxControllerTest {
 
             assertNotNull(actualItem);
 
-            assertThat(expectedItem.getName()).isEqualToIgnoringCase(actualItem.getName());
+            assertThat(expectedItem.getName()).isEqualToIgnoringWhitespace(actualItem.getName());
             assertEquals(expectedItem.getTotal(), actualItem.getTotal());
         });
-
     }
 
-    public static <T> T fromJsonToObject (String json, Class<T> clazz) {
-        try {
-            return new ObjectMapper().readValue(json, clazz);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+
+
+
+
+
+
+
+
 
 }

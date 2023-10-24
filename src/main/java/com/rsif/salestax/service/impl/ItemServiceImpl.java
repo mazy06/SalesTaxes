@@ -5,11 +5,16 @@ import com.rsif.salestax.model.Receipt;
 import com.rsif.salestax.service.ItemService;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.List;
 
 @Service
 public class ItemServiceImpl implements ItemService {
 
+    private static final DecimalFormatSymbols SYMBOLS = new DecimalFormatSymbols(Locale.US);
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00", SYMBOLS);
 
     @Override
     public Receipt getItemSalesTaxCalc(List<CartItem> cartItems) {
@@ -18,10 +23,10 @@ public class ItemServiceImpl implements ItemService {
         double totalSalesTax = cartItems.stream().mapToDouble(this::calculateSalesTax).sum();
         double totalCost = cartItems.stream().mapToDouble(item -> item.getPrice() + calculateSalesTax(item)).sum();
 
-        cartItems.forEach(item -> receipt.addItem(item.getName(), item.getPrice() + calculateSalesTax(item)));
+        cartItems.forEach(item -> receipt.addItem(item.getName(), roundToTwoDecimalPlaces(item.getPrice() + calculateSalesTax(item))));
 
-        receipt.setTotalSalesTax(totalSalesTax);
-        receipt.setTotalCost(totalCost);
+        receipt.setTotalSalesTax(roundToTwoDecimalPlaces(totalSalesTax));
+        receipt.setTotalCost(roundToTwoDecimalPlaces(totalCost));
         return receipt;
     }
 
@@ -52,6 +57,10 @@ public class ItemServiceImpl implements ItemService {
 
     private double roundToNearestFiveCents(double amount) {
         return Math.ceil(amount / 0.05) * 0.05;
+    }
+
+    private double roundToTwoDecimalPlaces(double value) {
+        return Double.parseDouble(DECIMAL_FORMAT.format(value));
     }
 
 
