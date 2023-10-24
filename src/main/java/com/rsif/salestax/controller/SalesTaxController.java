@@ -3,13 +3,13 @@ package com.rsif.salestax.controller;
 import com.rsif.salestax.model.CartItem;
 import com.rsif.salestax.model.Receipt;
 import com.rsif.salestax.service.ItemService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+
 public class SalesTaxController {
 
     private final ItemService itemService;

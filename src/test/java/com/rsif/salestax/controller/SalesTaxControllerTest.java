@@ -5,6 +5,8 @@ import com.rsif.salestax.model.CartItem;
 import com.rsif.salestax.model.Receipt;
 import com.rsif.salestax.model.ReceiptItem;
 import com.rsif.salestax.service.ItemService;
+import com.rsif.salestax.service.impl.ItemServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -12,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,17 +26,22 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebMvcTest(SalesTaxController.class)
+@WebMvcTest(controllers = SalesTaxController.class)
 class SalesTaxControllerTest {
 
     public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8);
-    @Autowired
-    private MockMvc mockMvc;
     @MockBean
     private ItemService itemService;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    SalesTaxController salesTaxController;
 
-
+    @BeforeEach
+    public void setup() {
+        this.mockMvc = MockMvcBuilders.standaloneSetup(new SalesTaxController(new ItemServiceImpl())).build();
+    }
 
 
     @Test
@@ -47,16 +55,11 @@ class SalesTaxControllerTest {
 
         // Créer un exemple de données de sortie attendues
         Receipt expectedReceipt = new Receipt();
-        expectedReceipt.addItem("book", 12.99);
+        expectedReceipt.addItem("book", 12.49);
         expectedReceipt.addItem("music CD", 16.49);
         expectedReceipt.addItem("chocolatebar", 0.85);
         expectedReceipt.setTotalSalesTax(1.50);
         expectedReceipt.setTotalCost(29.83);
-
-        // Définir le comportement du mock du calculateur de taxes
-        /*when(itemService.calculateSalesTax(cartItems.get(0))).thenReturn(0.0);
-        when(itemService.calculateSalesTax(cartItems.get(1))).thenReturn(6.00);
-        when(itemService.calculateSalesTax(cartItems.get(2))).thenReturn(0.60);*/
 
         String requestJson = asJsonString(cartItems);
 
@@ -68,7 +71,7 @@ class SalesTaxControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
-        Receipt actualReceipt = fromJson(content, Receipt.class);
+        Receipt actualReceipt = fromJsonToObject(content, Receipt.class);
 
 
         // Vérifier que la réponse correspond aux données attendues
@@ -91,7 +94,7 @@ class SalesTaxControllerTest {
 
     }
 
-    public static <T> T fromJson (String json, Class<T> clazz) {
+    public static <T> T fromJsonToObject (String json, Class<T> clazz) {
         try {
             return new ObjectMapper().readValue(json, clazz);
         } catch (Exception e) {
